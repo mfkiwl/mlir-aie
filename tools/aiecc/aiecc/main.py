@@ -164,7 +164,7 @@ class flow_runner:
                             '--expand-strided-metadata',
                             '--lower-affine',
                             '--convert-arith-to-llvm',
-                            '--finalize-memref-to-llvm',
+                            '--convert-memref-to-llvm',
                             '--convert-func-to-llvm=use-bare-ptr-memref-call-conv',
                             '--convert-cf-to-llvm',
                             '--canonicalize', '--cse', file_core, '-o', file_opt_core])
@@ -330,6 +330,7 @@ class flow_runner:
         self.file_with_addresses = os.path.join(self.tmpdirname, 'input_with_addresses.mlir')
         await self.do_call(progress.task, ['aie-opt',
                                           '--lower-affine',
+                                          '--aie-canonicalize-device',
                                           '--aie-assign-lock-ids',
                                           '--aie-register-objectFifos',
                                           '--aie-objectFifo-stateful-transform',
@@ -354,7 +355,7 @@ class flow_runner:
                               '--expand-strided-metadata',
                               '--lower-affine',
                               '--convert-arith-to-llvm',
-                              '--finalize-memref-to-llvm',
+                              '--convert-memref-to-llvm',
                               '--convert-func-to-llvm=use-bare-ptr-memref-call-conv',
                               '--convert-cf-to-llvm',
                               '--canonicalize', '--cse', self.file_with_addresses, '-o', self.file_opt_with_addresses])
