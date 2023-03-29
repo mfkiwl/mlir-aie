@@ -1,0 +1,8 @@
+<project name="test" processor="me">
+    <file type="c" name="threshold.cc" path=""/>
+    <file type="c" name="test.cc" path=""/>
+    <option id="project.name" value="test"/>
+	<option id="bridge.cfg" value="test.bcf"/>
+    <option id="project.type" value="exe"/>
+	<option id="cpp.include" value="/proj/xbuilds/2022.2_daily_latest/installs/lin64/Vitis/2022.2/aietools/include" inherit="1"/>
+</project>

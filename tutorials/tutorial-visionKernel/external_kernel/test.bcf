@@ -1,0 +1,12 @@
+_entry_point _main_init
+_symbol vitis_vision_threshold _after _main_init
+_symbol      _main_init 0
+_reserved DMb      0x00000 0x40000 //Don't put data in code memory
+_reserved DMb 0x40000 0x10000  // No tile with memory exists to the south.
+_reserved DMb 0x50000 0x10000  // No tile with memory exists to the west.
+_reserved DMb 0x60000 0x10000  // No tile with memory exists to the north.
+_symbol inbuf 0x70400 0x100
+_symbol outbuf 0x70500 0x100
+_stack    DM_stack 0x70000  0x400 //stack for core
+_reserved DMb 0x80000 0x80000 // And everything else the core can't see
+_resolve _main extern_kernel
