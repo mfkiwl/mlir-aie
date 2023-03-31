@@ -9,11 +9,11 @@ all: tutorial-visionKernel.exe
 	@cp ./elf/*.elf ./elf/*.elf.map .
 
 external_kernel/threshold.o: external_kernel/threshold.cc
-	$(MAKE) -C external_kernel build
-#	$(MAKE) -C external_kernel mlir
+#	$(MAKE) -C external_kernel build
+	$(MAKE) -C external_kernel mlir
 
 vitisVisionThreshold.o: external_kernel/threshold.o
-	cp external_kernel/work/Release_LLVM/test.prx/threshold.o ./vitisVisionThreshold.o
+	cp external_kernel/threshold.o ./vitisVisionThreshold.o
 #	cp external_kernel/kernel.o ./kernel.o
 
 # Command line mlir-aie compile script "aiecc.py"

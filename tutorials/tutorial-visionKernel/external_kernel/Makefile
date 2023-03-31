@@ -6,7 +6,7 @@ include ../../makefile-common
 mlir: threshold.o
 
 %.o: %.cc
-	xchesscc ${CHESSCC_FLAGS} -c $<
+	xchesscc -f ${CHESSCC_FLAGS} -c $< -o $@
 
 build:
 	xchessmk ${CHESS_FLAGS} test.prx
