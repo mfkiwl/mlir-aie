@@ -22,6 +22,9 @@
 
 #include "aie_inc.cpp"
 
+constexpr int WIDTH = 256;
+constexpr int HEIGHT = 256;
+
 int main(int argc, char *argv[]) {
     
     printf("Test start.\n");
@@ -37,8 +40,8 @@ int main(int argc, char *argv[]) {
 
     mlir_aie_init_mems(_xaie, 2);
 
-    int16_t *mem_ptr_in = (int16_t *)mlir_aie_mem_alloc(_xaie, 0, 256*256/2);
-    int16_t *mem_ptr_out = (int16_t *)mlir_aie_mem_alloc(_xaie, 1, 256*256/2);
+    int16_t *mem_ptr_in = (int16_t *)mlir_aie_mem_alloc(_xaie, 0, WIDTH*HEIGHT/2);
+    int16_t *mem_ptr_out = (int16_t *)mlir_aie_mem_alloc(_xaie, 1, WIDTH*HEIGHT/2);
 
     // Set virtual pointer used to configure
 #if defined(__AIESIM__)
@@ -56,18 +59,23 @@ int main(int argc, char *argv[]) {
 
     mlir_aie_clear_tile_memory(_xaie, 3, 4);
 
+    if (mlir_aie_acquire_of_0_lock_0(_xaie, 0, 10000) == XAIE_OK)
+        printf("Acquired objFifo 0 lock 0 for write\n");
+    else
+        printf("ERROR: timed out on objFifo 0 lock 0 for write\n");
+    
+    for (int i = 0; i < HEIGHT; i++)
+        for (int j = 0; j < WIDTH; j++)
+            mem_ptr_in[i*WIDTH+j] = i;
+
+    mlir_aie_sync_mem_dev(_xaie, 0);
+
+    mlir_aie_release_of_0_lock_0(_xaie, 1, 0);
+    printf("Released objFifo 0 lock 0 for read\n");
+
     // Helper function to enable all AIE cores
     printf("Start cores\n");
     mlir_aie_start_cores(_xaie);
-
-    mlir_aie_acquire_of_0_lock_0(_xaie, 0, 10000);
-
-    for (int i = 0; i < 256; i++)
-        for (int j = 0; j < 256; j++)
-            mem_ptr_in[i*256+j] = i;
-
-    mlir_aie_sync_mem_dev(_xaie, 0);
-    mlir_aie_release_of_0_lock_0(_xaie, 1, 0);
 
     // acquire output shim
     if (mlir_aie_acquire_of_3_lock_0(_xaie, 1, 10000) == XAIE_OK)
@@ -78,9 +86,9 @@ int main(int argc, char *argv[]) {
     // check output DDR
     mlir_aie_sync_mem_cpu(_xaie, 1);
 
-    for (int i = 0; i < 256; i++)
-        //for (int j = 0; j < 256; j++)
-            mlir_aie_check("After start cores:", mem_ptr_out[i*256], i < threshold ? i : threshold, errors);
+    for (int i = 0; i < WIDTH; i++)
+        //for (int j = 0; j < HEIGHT; j++)
+            mlir_aie_check("After start cores:", mem_ptr_out[i*WIDTH], i < threshold ? i : threshold, errors);
 
     // release output shim
     if (mlir_aie_release_of_3_lock_0(_xaie, 0, 10000) == XAIE_OK)
