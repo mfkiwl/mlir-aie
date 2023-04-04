@@ -26,34 +26,33 @@ module @tutorial_visonKernel {
 %tile34 = AIE.tile(3, 4)
     %tile70 = AIE.tile(7, 0)
 
-    %ext_buf70_in  = AIE.external_buffer {sym_name = "buffer_in"}: memref<256x256xi16> 
-    %ext_buf70_out = AIE.external_buffer {sym_name = "buffer_out"}: memref<256x256xi16> 
+    %ext_buf70_in  = AIE.external_buffer {sym_name = "buffer_in"}: memref<32x32xi16> 
+    %ext_buf70_out = AIE.external_buffer {sym_name = "buffer_out"}: memref<32x32xi16> 
 
-    %objFifo_in = AIE.objectFifo.createObjectFifo(%tile70, {%tile34}, 1) : !AIE.objectFifo<memref<256x16xi16>>
-    %objFifo_out = AIE.objectFifo.createObjectFifo(%tile34, {%tile70}, 1) : !AIE.objectFifo<memref<256x16xi16>>
+    %objFifo_in = AIE.objectFifo.createObjectFifo(%tile70, {%tile34}, 1) : !AIE.objectFifo<memref<32x32xi16>>
+    %objFifo_out = AIE.objectFifo.createObjectFifo(%tile34, {%tile70}, 1) : !AIE.objectFifo<memref<32x32xi16>>
 
-    AIE.objectFifo.registerExternalBuffers(%tile70, %objFifo_in : !AIE.objectFifo<memref<256x16xi16>>, {%ext_buf70_in}) : (memref<256x256xi16>)
-    AIE.objectFifo.registerExternalBuffers(%tile70, %objFifo_out : !AIE.objectFifo<memref<256x16xi16>>, {%ext_buf70_out}) : (memref<256x256xi16>)
+    AIE.objectFifo.registerExternalBuffers(%tile70, %objFifo_in : !AIE.objectFifo<memref<32x32xi16>>, {%ext_buf70_in}) : (memref<32x32xi16>)
+    AIE.objectFifo.registerExternalBuffers(%tile70, %objFifo_out : !AIE.objectFifo<memref<32x32xi16>>, {%ext_buf70_out}) : (memref<32x32xi16>)
 
-    func.func private @vitis_vision_threshold(%in: memref<256x16xi16>, %out: memref<256x16xi16>) -> ()
+    func.func private @vitis_vision_threshold(%in: memref<32x32xi16>, %out: memref<32x32xi16>) -> ()
  
     %core34 = AIE.core(%tile34) {
         %c0 = arith.constant 0 : index
         %c1 = arith.constant 1 : index
-        %c16 = arith.constant 16 : index
-        %height = arith.constant 256 : index
+        %cNumberOfSubImages = arith.constant 1 : index
         
-        scf.for %iter = %c0 to %c1 step %c1 { 
-            %inputSubview = AIE.objectFifo.acquire<Consume>(%objFifo_in : !AIE.objectFifo<memref<256x16xi16>>, 1) : !AIE.objectFifoSubview<memref<256x16xi16>>
-            %outputSubview = AIE.objectFifo.acquire<Produce>(%objFifo_out : !AIE.objectFifo<memref<256x16xi16>>, 1) : !AIE.objectFifoSubview<memref<256x16xi16>>
+        scf.for %iter = %c0 to %cNumberOfSubImages step %c1 { 
+            %inputSubview = AIE.objectFifo.acquire<Consume>(%objFifo_in : !AIE.objectFifo<memref<32x32xi16>>, 1) : !AIE.objectFifoSubview<memref<32x32xi16>>
+            %outputSubview = AIE.objectFifo.acquire<Produce>(%objFifo_out : !AIE.objectFifo<memref<32x32xi16>>, 1) : !AIE.objectFifoSubview<memref<32x32xi16>>
             
-            %input = AIE.objectFifo.subview.access %inputSubview[0] : !AIE.objectFifoSubview<memref<256x16xi16>> -> memref<256x16xi16>
-            %output = AIE.objectFifo.subview.access %outputSubview[0] : !AIE.objectFifoSubview<memref<256x16xi16>> -> memref<256x16xi16>
+            %input = AIE.objectFifo.subview.access %inputSubview[0] : !AIE.objectFifoSubview<memref<32x32xi16>> -> memref<32x32xi16>
+            %output = AIE.objectFifo.subview.access %outputSubview[0] : !AIE.objectFifoSubview<memref<32x32xi16>> -> memref<32x32xi16>
 
-            func.call @vitis_vision_threshold(%input, %output) : (memref<256x16xi16>, memref<256x16xi16>) -> ()
+            func.call @vitis_vision_threshold(%input, %output) : (memref<32x32xi16>, memref<32x32xi16>) -> ()
             
-            AIE.objectFifo.release<Consume>(%objFifo_in : !AIE.objectFifo<memref<256x16xi16>>, 1)
-            AIE.objectFifo.release<Produce>(%objFifo_out : !AIE.objectFifo<memref<256x16xi16>>, 1)
+            AIE.objectFifo.release<Consume>(%objFifo_in : !AIE.objectFifo<memref<32x32xi16>>, 1)
+            AIE.objectFifo.release<Produce>(%objFifo_out : !AIE.objectFifo<memref<32x32xi16>>, 1)
         }
             
         AIE.end

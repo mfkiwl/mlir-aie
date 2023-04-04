@@ -88,9 +88,8 @@ extern "C" {
 //	const int16_t thresh_val, const int16_t max_val) 
 void vitis_vision_threshold(int16_t *img_in, int16_t *img_out) 
 {
-    int32_t img_width  = 256;
-    //int32_t img_height = 256;
-    int32_t img_height = 16;
+    int32_t img_width  = 32;
+    int32_t img_height = 32;
     int32_t thresh_val = 100;
     int32_t max_val = 255;
 

@@ -22,8 +22,8 @@
 
 #include "aie_inc.cpp"
 
-constexpr int WIDTH = 256;
-constexpr int HEIGHT = 256;
+constexpr int WIDTH = 32;
+constexpr int HEIGHT = 32;
 
 int main(int argc, char *argv[]) {
     
@@ -42,6 +42,11 @@ int main(int argc, char *argv[]) {
 
     int16_t *mem_ptr_in = (int16_t *)mlir_aie_mem_alloc(_xaie, 0, WIDTH*HEIGHT/2);
     int16_t *mem_ptr_out = (int16_t *)mlir_aie_mem_alloc(_xaie, 1, WIDTH*HEIGHT/2);
+
+    for (int i = 0; i < HEIGHT; i++)
+        for (int j = 0; j < WIDTH; j++)
+            mem_ptr_out[i*WIDTH+j] = -1;
+
 
     // Set virtual pointer used to configure
 #if defined(__AIESIM__)
@@ -66,7 +71,7 @@ int main(int argc, char *argv[]) {
     
     for (int i = 0; i < HEIGHT; i++)
         for (int j = 0; j < WIDTH; j++)
-            mem_ptr_in[i*WIDTH+j] = i;
+            mem_ptr_in[i*WIDTH+j] = i*(256/HEIGHT);
 
     mlir_aie_sync_mem_dev(_xaie, 0);
 
@@ -87,8 +92,8 @@ int main(int argc, char *argv[]) {
     mlir_aie_sync_mem_cpu(_xaie, 1);
 
     for (int i = 0; i < WIDTH; i++)
-        //for (int j = 0; j < HEIGHT; j++)
-            mlir_aie_check("After start cores:", mem_ptr_out[i*WIDTH], i < threshold ? i : threshold, errors);
+        for (int j = 0; j < HEIGHT; j++)
+            mlir_aie_check("After start cores:", mem_ptr_out[i*WIDTH], i < threshold ? 0 : 255, errors);
 
     // release output shim
     if (mlir_aie_release_of_3_lock_0(_xaie, 0, 10000) == XAIE_OK)
