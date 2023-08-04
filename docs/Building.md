@@ -109,6 +109,11 @@ the tools are largely board and device independent and can be adapted to other e
 
     The MLIR AIE tools will be able to generate binaries targetting a combination of AIEngine and ARM/x86 processors.
 
+    If you are building the HSA runtime you also must pass paths to a ROCm install. This is assuming your rocm install is pointed to by `${ROCM_ROOT}`
+```
+    ./utils/build-mlir-aie.sh llvm/build/ build install /opt/xaienginev2 ${ROCM_ROOT}/lib/cmake/hsa-runtime64/ ${ROCM_ROOT}/lib/cmake/hsakmt/
+```
+
 5. In order to run all the tools, it is necessary to add some paths into your environment. This can be
 done by sourcing the `utils/env_setup.sh` script with the paths to the install folders for mlir-aie
 and llvm.

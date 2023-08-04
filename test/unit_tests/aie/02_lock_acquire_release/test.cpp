@@ -26,7 +26,9 @@ int main(int argc, char *argv[]) {
   printf("test start.\n");
 
   aie_libxaie_ctx_t *_xaie = mlir_aie_init_libxaie();
+  printf("1\n");
   mlir_aie_init_device(_xaie);
+  printf("2\n");
 
   mlir_aie_configure_switchboxes(_xaie);
   mlir_aie_initialize_locks(_xaie);

@@ -9,12 +9,14 @@
 # This script builds mlir-aie given <llvm dir>.
 # Assuming they are all in the same subfolder, it would look like:
 #
-# build-mlir-aie.sh <llvm build dir> <build dir> <install dir>
+# build-mlir-aie.sh <llvm dir> <build dir> <install dir> <mlir-air-dir> <x86-libxaie-dir> 
 #
 # e.g. build-mlir-aie.sh /scratch/llvm/build
 #
 # <build dir>    - optional, mlir-aie/build dir name, default is 'build'
 # <install dir>  - optional, mlir-aie/install dir name, default is 'install'
+# <mlir-air-dir>    - optional, path to mlir-air to get runtime functions, necessary when compiling for VCK5000
+# <x86-libxaie-dir> - optional, path to the x86 libxaie installation, necessary when compiling for VCK5000
 #
 ##===----------------------------------------------------------------------===##
 
@@ -31,7 +33,11 @@ echo "LLVM BUILD DIR: $LLVM_BUILD_DIR"
 
 BUILD_DIR=${2:-"build"}
 INSTALL_DIR=${3:-"install"}
+LIBXAIE_DIR=${4:-""}
+HSA_DIR=${5:-""}
+HSAKMT_DIR=${6:-""}
 LLVM_ENABLE_RTTI=${LLVM_ENABLE_RTTI:OFF}
+
 
 mkdir -p $BUILD_DIR
 mkdir -p $INSTALL_DIR
@@ -42,6 +48,10 @@ set -e
 CMAKE_CONFIGS="\
     -GNinja \
     -DLLVM_DIR=${LLVM_BUILD_DIR}/lib/cmake/llvm \
+    -DLibXAIE_x86_64-hsa_DIR=${LIBXAIE_DIR} \
+    -Dhsa-runtime64_DIR=${HSA_DIR} \
+    -Dhsakmt_DIR=${HSAKMT_DIR} \
+    -DROCR_DIR=${ROCR_DIR} \
     -DMLIR_DIR=${LLVM_BUILD_DIR}/lib/cmake/mlir \
     -DCMAKE_MODULE_PATH=${CMAKEMODULES_DIR}/modulesXilinx \
     -DCMAKE_INSTALL_PREFIX="../${INSTALL_DIR}" \
@@ -52,9 +62,10 @@ CMAKE_CONFIGS="\
     -DCMAKE_CXX_VISIBILITY_PRESET=hidden \
     -DLLVM_ENABLE_ASSERTIONS=ON \
     -DLLVM_ENABLE_RTTI=$LLVM_ENABLE_RTTI \
-    -DAIE_RUNTIME_TARGETS=x86_64;aarch64 \
+    -DAIE_RUNTIME_TARGETS=x86_64-hsa;aarch64 \
     -DAIE_ENABLE_PYTHON_PASSES=OFF \
-    -DAIE_RUNTIME_TEST_TARGET=aarch64"
+    -DAIE_RUNTIME_TEST_TARGET=aarch64
+    .. |& tee cmake.log"
 
 if [ -x "$(command -v lld)" ]; then
   CMAKE_CONFIGS="${CMAKE_CONFIGS} -DLLVM_USE_LINKER=lld"

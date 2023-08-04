@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
+
 ##===- utils/build-llvm-local.sh - Build LLVM on local machine --*- Script -*-===##
-#
-# This file licensed under the Apache License v2.0 with LLVM Exceptions.
-# See https://llvm.org/LICENSE.txt for license information.
-# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-#
+# 
+# Copyright (C) 2022, Advanced Micro Devices, Inc.
+# SPDX-License-Identifier: MIT
+
+# 
 ##===----------------------------------------------------------------------===##
 #
 # This script build LLVM with custom options intended to be called on your
@@ -21,6 +22,8 @@
 LLVM_DIR=${1:-"llvm"}
 BUILD_DIR=${2:-"build"}
 INSTALL_DIR=${3:-"install"}
+
+PYTHON_ROOT=`pip3 show pybind11 | grep Location | awk '{print $2}'`
 
 mkdir -p $LLVM_DIR/$BUILD_DIR
 mkdir -p $LLVM_DIR/$INSTALL_DIR
@@ -64,3 +67,4 @@ cmake $CMAKE_CONFIGS ../llvm 2>&1 | tee cmake.log
 ninja 2>&1 | tee ninja.log
 ninja install 2>&1 | tee ninja-install.log
 )
+

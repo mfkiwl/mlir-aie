@@ -8,6 +8,9 @@
 //
 //===----------------------------------------------------------------------===//
 
+// TODO: GET RID OF THIS
+#define AIR_PCIE
+
 #include <cassert>
 #include <cmath>
 #include <cstdio>

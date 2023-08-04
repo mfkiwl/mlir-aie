@@ -63,6 +63,9 @@ module @test09_simple_shim_dma {
       aie.end
   }
 
+  %c72 = AIE.core(%t72) {
+    AIE.end
+  }
 
 
 
