@@ -9,18 +9,17 @@
 //===----------------------------------------------------------------------===//
 
 #include "memory_allocator.h"
-#ifdef HSA_RUNTIME
+//#ifdef HSA_RUNTIME
 #include "hsa/hsa.h"
 #include "hsa/hsa_ext_amd.h"
 #include "test_library.h"
-#endif
+//#endif
 #include <iostream>
 
 //
 // This memory allocator links against the HSA allocator
 //
 int *mlir_aie_mem_alloc(aie_libxaie_ctx_t *_xaie, ext_mem_model_t &handle, int size) {
-#ifdef HSA_RUNTIME
   int size_bytes = size * sizeof(int);
   hsa_amd_memory_pool_allocate(_xaie->global_mem_pool, size_bytes, 0, (void **)&(handle.virtualAddr));
 
@@ -35,9 +34,6 @@ int *mlir_aie_mem_alloc(aie_libxaie_ctx_t *_xaie, ext_mem_model_t &handle, int s
             << std::endl;
 
   return (int *)handle.virtualAddr;
-#elif
-  return NULL;
-#endif
 }
 
 /*
