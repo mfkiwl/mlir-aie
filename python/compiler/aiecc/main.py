@@ -702,6 +702,7 @@ class FlowRunner:
                 "-I" + xaiengine_include_path,
                 "-L" + xaiengine_lib_path,
                 "-L" + os.path.join(opts.aietools_path, "lib", "lnx64.o"),
+                "-Wl,-R" + xaiengine_lib_path,
                 "-I" + self.tmpdirname,
                 "-fuse-ld=lld",
                 "-lm",
