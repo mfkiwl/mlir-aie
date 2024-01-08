@@ -32,8 +32,6 @@ if("aarch64" IN_LIST AIE_RUNTIME_TARGETS)
   set(AIE_CONFIG_LibXAIE_aarch64_DIR
       "${PROJECT_BINARY_DIR}/runtime_lib/aarch64/xaiengine")
 endif()
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/AIEConfig.cmake.in
-               ${aie_cmake_builddir}/AIEConfig.cmake @ONLY)
 set(AIE_CONFIG_CMAKE_DIR)
 set(AIE_CONFIG_BINARY_DIR)
 set(AIE_CONFIG_TOOLS_BINARY_DIR)
@@ -72,7 +70,15 @@ if("aarch64" IN_LIST AIE_RUNTIME_TARGETS)
 endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/AIEConfig.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/AIEConfig.cmake @ONLY)
+  ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/AIEConfig.cmake @ONLY)
+
+file(COPY "${CMAKE_CURRENT_BINARY_DIR}"
+  DESTINATION ${CMAKE_BINARY_DIR}
+  NO_SOURCE_PERMISSIONS
+  FILES_MATCHING PATTERN *.cmake
+  PATTERN CMakeFiles EXCLUDE
+)
+
 set(AIE_CONFIG_CODE)
 set(AIE_CONFIG_CMAKE_DIR)
 set(AIE_CONFIG_BINARY_DIR)
