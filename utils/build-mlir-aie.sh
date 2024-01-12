@@ -9,14 +9,15 @@
 # This script builds mlir-aie given <llvm dir>.
 # Assuming they are all in the same subfolder, it would look like:
 #
-# build-mlir-aie.sh <llvm dir> <build dir> <install dir> <mlir-air-dir> <x86-libxaie-dir> 
+# build-mlir-aie.sh <llvm dir> <build dir> <install dir> <mlir-air-dir> <x86-libxaie-dir> <hsa-dir> <hsa-kmt-dir>
 #
 # e.g. build-mlir-aie.sh /scratch/llvm/build
 #
 # <build dir>    - optional, mlir-aie/build dir name, default is 'build'
 # <install dir>  - optional, mlir-aie/install dir name, default is 'install'
-# <mlir-air-dir>    - optional, path to mlir-air to get runtime functions, necessary when compiling for VCK5000
 # <x86-libxaie-dir> - optional, path to the x86 libxaie installation, necessary when compiling for VCK5000
+# <HSA-dir> - optional, path to the HSA installation of the ROCm runtime
+# <HSAKMT-dir> - optional, Path to the HSA KMT installation of the ROCm runtime
 #
 ##===----------------------------------------------------------------------===##
 
